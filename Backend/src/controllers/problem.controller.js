@@ -57,7 +57,7 @@ export const createProblem = async (req, res) => {
         }
       }
     }
-    console.log("herer");
+    
     
     const newProblem = await db.problem.create({
       data: {
@@ -86,16 +86,88 @@ export const createProblem = async (req, res) => {
     });
   }
 };
-export const getAllProblems = async (req, res)=>{}
+export const getAllProblems = async (req, res)=>{
+  try {
+    const problems = await db.problem.findMany();
+    if (!problems){
+      return res.status(404).json({
+        error:"no problems found"
+      })
+    }
+    res.status(200).json({
+      success:true,
+      message:"message fetched successfully",
+      problems
+    })
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error:"Error while creating problem",
+    });
+    
+  }
+};
 
 
-export const getProblemById = async (req, res)=>{}
+export const getProblemById = async (req, res)=>{
+  const {id} = req.params;
+
+  try {
+    const problem = await db.problem.findMany(
+    { where:{
+      id
+    }
+
+    })
+    if(!problem){
+      return res.status(404).json({error:"problem not found."})
+    }
+    return res.status(200).json({
+      success:true,
+      message:"message Created sucessfully",
+      problem
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error:"Error while fetching pronlem by id",
+    });
+  }
+};
 
 
 export const updateProblem = async (req, res)=>{} 
 
 
-export const deleteProblem = async (req, res)=>{}
+export const deleteProblem = async (req, res)=>{
+  const {id} = req.params;
+try {const problem = await db.problem.findUnique({
+  where:
+  {id}
+});
+if(!problem){
+  return res.status(404).json({
+    error:"Problem not found"
+  })
+}
+await db.problem.delete({where:{id}});
+
+res.status(200).json({
+  success:true,
+  message:"problem deleted successfully"
+})
+} catch (error) {
+  console.log(error)
+  return res.status(500).json({
+    error:"error while deleting the problem",
+  });
+}
+ 
+
+ 
+}
 
 
 export const getAllProblemsSolvedByUser = async (req, res)=>{}
