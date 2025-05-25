@@ -24,7 +24,7 @@ export const getSubmissionsForProblem = async (req, res)=>{
         const userId = req.user.id;
         const problemId = req.params.problemId;
         const Submissions = await db.submission.findMany({
-            wher:{
+            where:{
                 userId:userId,
                 problemId:problemId
             }
@@ -35,7 +35,7 @@ export const getSubmissionsForProblem = async (req, res)=>{
             Submissions
         })
     } catch (error) {
-        console.error("Fetch Submissions Error:, error");
+        console.error("Fetch Submissions Error:", error);
         res.status(500).json({error: "Failed to fetch submissions"});
     }
 }

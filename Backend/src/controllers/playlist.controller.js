@@ -1,3 +1,6 @@
+
+import { db } from "../libs/db.js";
+
 export const createPlaylist = async (req , res)=>{
     try {
         const {name, description} = req.body;
@@ -89,7 +92,7 @@ export const addProblemToPlaylist = async (req , res)=>{
         }
             const problemsInPlaylist =  await db.problemInPlaylist.createMany({
                 data:problemIds.map((problemId)=>({
-                    playlistId,
+                    playListId:playlistId,
                     problemId
                 }))
             })
@@ -105,6 +108,48 @@ export const addProblemToPlaylist = async (req , res)=>{
     }
 }
 
-export const deletePlaylist = async (req , res)=>{}
+export const deletePlaylist = async (req , res)=>{
+    const {playlistId} = req.params;
+    try {
+        const deletedPlaylist = await db.playlist.delete({
+            where:{
+                id:playlistId
+            }
+        });
+        res.status(200).json({
+            success: true,
+            message: 'Playlist deleted successfully',
+            deletedPlaylist,
+        })
+    } catch (error) {
+        console.error('Error deleting playlist:', error.message);
+        res.status(500).json({ error: 'Failed to delete playlist'});
+    }
+}
 
-export const removeProblemFromPlaylist = async (req , res)=>{}
+export const removeProblemFromPlaylist = async (req , res)=>{
+    const {playlistId} = req.params;
+    const {problemIds} = req.body;
+
+    try {
+        if(!Array.isArray(problemIds) || problemIds.length === 0){
+            return res.status(400).json({error:"Invalid or missing problemsId"})
+        }
+        const deletedProblem = await db.problemsInPlaylist.deleteMany({
+            where:{
+                playlistId,
+                problemId:{
+                    in:problemIds
+                }
+            }
+        })
+        res.status(200).json({
+            success: true,
+            message: 'Problem removed from playlist successfully',
+            deletedProblem,
+        })
+    } catch (error) {
+        console.error('Error removing problem from playlist:', error.message);
+        res.status(500).json({ error: 'Failed to remove problem from playlist'});
+    }
+}
