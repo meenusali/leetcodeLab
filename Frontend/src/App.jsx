@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import HomePage from "./page/HomePage";
@@ -11,55 +11,150 @@ import Layout from "./layout/Layout";
 import AdminRoute from "./components/AdminRoute";
 import AddProblem from "./page/AddProblem";
 import ProblemPage from "./page/ProblemPage";
+import Landingpage from "./page/Landingpage";
+import ProfilePage from "./page/ProfilePage";
+import ContestPage from "./page/contestPage";
+import LeaderBoard from "./page/leaderBoard";
+import Navbar from "./components/Navbar";
+import EditProblem from "./page/EditProblem";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
-    checkAuth();
+    const initAuth = async () => {
+      await checkAuth();
+      setIsInitialLoad(false);
+    };
+    initAuth();
   }, [checkAuth]);
 
-  if (isCheckingAuth && !authUser) {
+  // Show loading only during initial auth check
+  if (isInitialLoad) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center min-h-screen">
         <Loader className="size-10 animate-spin" />
       </div>
     );
   }
 
+  // Public routes that should redirect to home if authenticated
+  const publicOnlyPaths = ['/login', '/signup', '/home'];
+  
+  // If user is authenticated and tries to access public-only routes, redirect to home
+  if (authUser && publicOnlyPaths.includes(location.pathname)) {
+    return <Navigate to="/" replace />;
+  }
+
+  // If user is not authenticated and tries to access protected routes, redirect to login
+  if (!authUser && !publicOnlyPaths.includes(location.pathname)) {
+    return <Navigate to="/home" replace />;
+  }
+
   return (
-    <div className="flex flex-col items-center justify-start ">
-      <Toaster />
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route
-            index
-            element={authUser ? <HomePage /> : <Navigate to={"/login"} />}
-          />
-        </Route>
-
-        <Route
-          path="/login"
-          element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}
+    <div className="min-h-screen bg-base-100">
+      {/* Show Navbar for all routes except landing page, login, and signup */}
+      {!['/home', '/login', '/signup'].includes(location.pathname) && <Navbar />}
+      
+      {/* Toast notifications */}
+      <div className="fixed top-4 right-4 z-50">
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#333',
+              color: '#fff',
+            },
+          }}
         />
+      </div>
 
-        <Route
-          path="/signup"
-          element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />}
-        />
+      {/* Main content wrapper - adjust padding based on navbar presence */}
+      <main className={`w-full ${['/home', '/login', '/signup'].includes(location.pathname) ? 'min-h-screen' : 'min-h-[calc(100vh-4rem)]'}`}>
+        {/* Content container with consistent max-width */}
+        <div className={`mx-auto ${['/login', '/signup'].includes(location.pathname) ? 'pt-12' : 'px-4 sm:px-6 lg:px-8 py-4'}`}>
+          <div className={`mx-auto w-full ${
+            location.pathname === '/login' || location.pathname === '/signup'
+              ? 'max-w-md'
+              : location.pathname === '/home'
+              ? ''  // No max-width for landing page
+              : 'max-w-7xl'
+          }`}>
+            <Routes>
+              {/* Public routes - accessible when logged out */}
+              <Route
+                path="/home"
+                element={<Landingpage />}
+              />
+              
+              {/* Auth routes with narrower width */}
+              <Route
+                path="/login"
+                element={
+                  <div className="w-full p-6 bg-base-200 rounded-lg shadow-lg">
+                    <LoginPage />
+                  </div>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <div className="w-full p-6 bg-base-200 rounded-lg shadow-lg">
+                    <SignUpPage />
+                  </div>
+                }
+              />
 
-        <Route
-          path="/problem/:id"
-          element={authUser ? <ProblemPage /> : <Navigate to={"/login"} />}
-        />
+              {/* Protected routes with full width */}
+              <Route
+                path="/"
+                element={<HomePage />}
+              />
+              
+              <Route
+                path="/problem/:id"
+                element={<ProblemPage />}
+              />
+              
+              <Route
+                path="/profile"
+                element={<ProfilePage />}
+              />
+              
+              <Route
+                path="/contests"
+                element={<ContestPage />}
+              />
+              
+              <Route
+                path="/leaderboard"
+                element={<LeaderBoard />}
+              />
 
-        <Route element={<AdminRoute />}>
-          <Route
-            path="/add-problem"
-            element={authUser ? <AddProblem /> : <Navigate to="/" />}
-          />
-        </Route>
-      </Routes>
+              {/* Admin routes */}
+              <Route element={<AdminRoute />}>
+                <Route
+                  path="/add-problem"
+                  element={<AddProblem />}
+                />
+                <Route
+                  path="/problem/edit/:id"
+                  element={<EditProblem />}
+                />
+              </Route>
+
+              {/* Catch all route - redirect to appropriate page based on auth status */}
+              <Route 
+                path="*" 
+                element={<Navigate to={authUser ? "/" : "/home"} replace />} 
+              />
+            </Routes>
+          </div>
+        </div>
+      </main>
     </div>
   );
 };

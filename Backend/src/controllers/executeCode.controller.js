@@ -139,7 +139,7 @@ export const executeCode = async (req , res)=>{
      });
   
 } catch (error) {
-    console.error("Error executing code:", error.message);
+    console.error("Error executing code:", error);
     res.status(500).json({ error: "Failed to execute code"});
 }
 };

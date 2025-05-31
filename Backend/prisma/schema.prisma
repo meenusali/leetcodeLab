@@ -64,6 +64,7 @@ user User @relation(fields: [userId], references: [id] ,onDelete: Cascade)
 submission Submission[]
 solvedBy ProblemSolved[]
 problemsPlaylists ProblemInPlaylist[]
+companies Company[]
 }
 
 model Submission{
@@ -151,4 +152,10 @@ model ProblemInPlaylist{
   problem Problem @relation(fields: [problemId] , references: [id] , onDelete: Cascade)
 
   @@unique([playListId , problemId])
+}
+
+model Company {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  problems  Problem[]  // Many-to-many relationship with Problem
 }

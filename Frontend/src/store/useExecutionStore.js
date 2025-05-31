@@ -30,5 +30,18 @@ export const useExecutionStore = create((set)=>({
         finally{
             set({isExecuting:false});
         }
+    },
+
+    execute: async (submission) => {
+        try {
+            set({ isExecuting: true });
+            const res = await axiosInstance.post("/execute", submission);
+            set({ executionResult: res.data });
+            return res.data;
+        } catch (error) {
+            throw error;
+        } finally {
+            set({ isExecuting: false });
+        }
     }
 }))

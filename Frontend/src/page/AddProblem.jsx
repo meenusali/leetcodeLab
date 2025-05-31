@@ -11,12 +11,16 @@ import {
   BookOpen,
   CheckCircle2,
   Download,
+  Wand2,
+  Upload,
 } from "lucide-react";
 import Editor from "@monaco-editor/react";
 import { useState } from 'react';
 import {axiosInstance} from "../lib/axios"
 import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
+import CreateWithAIModal from '../components/CreateWithAIModal';
+import ImportExportModal from '../components/ImportExportModal';
 
 const problemSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -512,6 +516,8 @@ public class Main {
 
 const CreateProblemForm = () => {
     const [sampleType , setSampleType] = useState("DP")
+    const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+    const [isImportExportModalOpen, setIsImportExportModalOpen] = useState(false);
     const navigation = useNavigate();
     const {register , control , handleSubmit , reset , formState:{errors}} = useForm(
         {
@@ -585,15 +591,51 @@ const CreateProblemForm = () => {
     reset(sampleData);
 }
 
+  const handleAISubmit = async (data) => {
+    try {
+      setIsLoading(true);
+      // TODO: Implement AI problem generation
+      // const response = await axiosInstance.post("/problems/generate-with-ai", data);
+      // reset(response.data);
+      toast.success("AI Problem generation coming soon!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error generating problem with AI");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className='container mx-auto py-8 px-4 max-w-7xl'>
-  <div className="card bg-base-100 shadow-xl">
+      <CreateWithAIModal 
+        isOpen={isAIModalOpen}
+        onClose={() => setIsAIModalOpen(false)}
+        onSubmit={handleAISubmit}
+      />
+      <ImportExportModal
+        isOpen={isImportExportModalOpen}
+        onClose={() => setIsImportExportModalOpen(false)}
+      />
+      <div className="card bg-base-100 shadow-xl">
         <div className="card-body p-6 md:p-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 pb-4 border-b">
-            <h2 className="card-title text-2xl md:text-3xl flex items-center gap-3">
-              <FileText className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-              Create Problem
-            </h2>
+            <div className="flex items-center gap-4">
+              <button 
+                type="button" 
+                className="btn btn-ghost gap-2"
+                onClick={() => navigation(-1)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back
+              </button>
+              <h2 className="card-title text-2xl md:text-3xl flex items-center gap-3">
+                <FileText className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+                Create Problem
+              </h2>
+            </div>
 
             <div className="flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
               <div className="join">
@@ -623,6 +665,22 @@ const CreateProblemForm = () => {
               >
                 <Download className="w-4 h-4" />
                 Load Sample
+              </button>
+              <button
+                type="button"
+                className="btn btn-accent gap-2"
+                onClick={() => setIsAIModalOpen(true)}
+              >
+                <Wand2 className="w-4 h-4" />
+                Create with AI
+              </button>
+              <button
+                type="button"
+                className="btn btn-info gap-2"
+                onClick={() => setIsImportExportModalOpen(true)}
+              >
+                <Upload className="w-4 h-4" />
+                Import/Export
               </button>
             </div>
           </div>
@@ -1032,7 +1090,39 @@ const CreateProblemForm = () => {
               </div>
             </div>
 
-            <div className="card-actions justify-end pt-4 border-t">
+            <div className="card-actions justify-end pt-4 border-t gap-4">
+              <button 
+                type="button" 
+                className="btn btn-outline btn-lg gap-2"
+                onClick={() => {
+                  reset({
+                    testcases: [{ input: "", output: "" }],
+                    tags: [""],
+                    examples: {
+                      JAVASCRIPT: { input: "", output: "", explanation: "" },
+                      PYTHON: { input: "", output: "", explanation: "" },
+                      JAVA: { input: "", output: "", explanation: "" },
+                    },
+                    codeSnippets: {
+                      JAVASCRIPT: "function solution() {\n  // Write your code here\n}",
+                      PYTHON: "def solution():\n    # Write your code here\n    pass",
+                      JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
+                    },
+                    referenceSolutions: {
+                      JAVASCRIPT: "// Add your reference solution here",
+                      PYTHON: "# Add your reference solution here",
+                      JAVA: "// Add your reference solution here",
+                    },
+                  });
+                  toast.success("Form reset successfully!");
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                  <path d="M3 3v5h5"/>
+                </svg>
+                Reset Form
+              </button>
               <button type="submit" className="btn btn-primary btn-lg gap-2">
                 {isLoading ? (
                   <span className="loading loading-spinner text-white"></span>
