@@ -127,13 +127,13 @@ const ProblemTable = ({ problems }) => {
           ) : (
             <div className="flex flex-col space-y-8">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="flex flex-col space-y-2">
-                  <h1 className="text-3xl font-bold">
-                    <span className="bg-gradient-to-r from-primary via-blue-400 to-primary/70 text-transparent bg-clip-text">
-                      Practice Problems
-                    </span>
-                  </h1>
-                  <p className="text-gray-400">Enhance your coding skills with our curated challenges</p>
+            <div className="flex flex-col space-y-2">
+              <h1 className="text-3xl font-bold">
+                <span className="bg-gradient-to-r from-primary via-blue-400 to-primary/70 text-transparent bg-clip-text">
+                  Practice Problems
+                </span>
+              </h1>
+              <p className="text-gray-400">Enhance your coding skills with our curated challenges</p>
                 </div>
               </div>
               <UserPlaylists onAddToPlaylist={() => setIsCreateModalOpen(true)} />
@@ -375,14 +375,14 @@ const ProblemTable = ({ problems }) => {
                               </>
                             ) : (
                               <>
-                                <Link
-                                  to={`/problem/${problem.id}`}
-                                  className="btn btn-sm bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary hover:border-primary/40"
+                              <Link
+                                to={`/problem/${problem.id}`}
+                                className="btn btn-sm bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary hover:border-primary/40"
                                   onClick={(e) => e.stopPropagation()}
-                                >
-                                  <Code2 className="w-4 h-4" />
-                                  Solve
-                                </Link>
+                              >
+                                <Code2 className="w-4 h-4" />
+                                Solve
+                              </Link>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();

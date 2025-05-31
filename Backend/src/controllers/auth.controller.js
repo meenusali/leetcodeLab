@@ -31,10 +31,11 @@ export const register = async (req , res)=>{
             expiresIn:"7d"
          })
             res.cookie("jwt" , token , {
-                httpOnly:true,
-                sameSite:"strict",
-                secure:process.env.NODE_ENv !== "development",
-                maxAge: 1000 * 60 * 60 * 24 * 7
+                httpOnly: true,
+                sameSite: process.env.NODE_ENV === "development" ? "lax" : "strict",
+                secure: process.env.NODE_ENV !== "development",
+                maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+                path: "/"
             })
 
             res.status(201).json({
@@ -93,10 +94,11 @@ export const login = async (req , res)=>{
             expiresIn:"7d"
         })
         res.cookie("jwt" , token , {
-            httpOnly:true,
-            sameSite:"strict",
-            secure:process.env.NODE_ENv !== "development",
-            maxAge: 1000 * 60 * 60 * 24 * 7
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === "development" ? "lax" : "strict",
+            secure: process.env.NODE_ENV !== "development",
+            maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+            path: "/"
         })
 
         res.status(201).json({
@@ -122,11 +124,11 @@ export const login = async (req , res)=>{
 export const logout = async (req , res)=>{
 try {
     res.clearCookie("jwt", {
-    httpOnly:true,
-    sameSite:"strict",
-    secure:process.env.NODE_ENv !== "development",
-    maxAge: 1000 * 60 * 60 * 24 * 7
-})
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === "development" ? "lax" : "strict",
+        secure: process.env.NODE_ENV !== "development",
+        path: "/"
+    })
     res.status(200).json({
         success:true,
         message:"User logged out successfully"

@@ -19,20 +19,31 @@ import Navbar from "./components/Navbar";
 import EditProblem from "./page/EditProblem";
 
 const App = () => {
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { authUser, checkAuth, set } = useAuthStore();
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const location = useLocation();
 
+  // Public routes that should redirect to home if authenticated
+  const publicOnlyPaths = ['/login', '/signup', '/home'];
+  const isPublicRoute = publicOnlyPaths.includes(location.pathname);
+
   useEffect(() => {
     const initAuth = async () => {
-      await checkAuth();
+      // Only check auth for protected routes
+      if (!isPublicRoute) {
+        try {
+          await checkAuth();
+        } catch (error) {
+          set({ authUser: null });
+        }
+      }
       setIsInitialLoad(false);
     };
     initAuth();
-  }, [checkAuth]);
+  }, [checkAuth, isPublicRoute]);
 
-  // Show loading only during initial auth check
-  if (isInitialLoad) {
+  // Show loading only during initial auth check for protected routes
+  if (isInitialLoad && !isPublicRoute) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader className="size-10 animate-spin" />
@@ -40,17 +51,15 @@ const App = () => {
     );
   }
 
-  // Public routes that should redirect to home if authenticated
-  const publicOnlyPaths = ['/login', '/signup', '/home'];
-  
   // If user is authenticated and tries to access public-only routes, redirect to home
-  if (authUser && publicOnlyPaths.includes(location.pathname)) {
+  if (authUser && isPublicRoute) {
     return <Navigate to="/" replace />;
   }
 
-  // If user is not authenticated and tries to access protected routes, redirect to login
-  if (!authUser && !publicOnlyPaths.includes(location.pathname)) {
-    return <Navigate to="/home" replace />;
+  // If user is not authenticated and tries to access protected routes, redirect to home
+  if (!authUser && !isPublicRoute) {
+    const returnTo = encodeURIComponent(location.pathname);
+    return <Navigate to={`/home?returnTo=${returnTo}`} replace />;
   }
 
   return (
