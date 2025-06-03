@@ -16,12 +16,16 @@ export const usePlaylistStore = create((set, get) => ({
         playlistData
       );
 
+      if (!response.data?.playlist) {
+        throw new Error('Invalid response format from server');
+      }
+
       set((state) => ({
-        playlists: [...state.playlists, response.data.playList],
+        playlists: [...(state.playlists || []), response.data.playlist],
       }));
 
       toast.success("Playlist created successfully");
-      return response.data.playList;
+      return response.data.playlist;
     } catch (error) {
       console.error("Error creating playlist:", error);
       toast.error(error.response?.data?.error || "Failed to create playlist");
@@ -35,10 +39,14 @@ export const usePlaylistStore = create((set, get) => ({
     try {
       set({ isLoading: true });
       const response = await axiosInstance.get("/playlist");
-      set({ playlists: response.data.playlists });
+      if (!response.data?.playlists) {
+        throw new Error('Invalid response format from server');
+      }
+      set({ playlists: response.data.playlists.filter(playlist => playlist && playlist.id) });
     } catch (error) {
       console.error("Error fetching playlists:", error);
       toast.error("Failed to fetch playlists");
+      set({ playlists: [] }); // Reset to empty array on error
     } finally {
       set({ isLoading: false });
     }

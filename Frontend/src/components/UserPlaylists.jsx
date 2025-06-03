@@ -76,7 +76,7 @@ const UserPlaylists = ({ onAddToPlaylist }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {playlists.map((playlist) => {
+        {playlists?.filter(playlist => playlist && playlist.id).map((playlist) => {
           const isExpanded = expandedPlaylists.has(playlist.id);
           const hasProblems = playlist.problems?.length > 0;
           const showExpandButton = playlist.problems?.length > 1;

@@ -29,7 +29,7 @@ import ViewAllProblemsModal from "./ViewAllProblemsModal";
 const ProblemTable = ({ problems }) => {
   const { authUser, token } = useAuthStore();
   const { isDeletingProblem, onDeleteProblem } = useActions();
-  const { createPlaylist } = usePlaylistStore();
+  const { createPlaylist, getAllPlaylists } = usePlaylistStore();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
@@ -94,8 +94,15 @@ const ProblemTable = ({ problems }) => {
   }
 
   const handleCreatePlaylist = async (data) => {
+    try {
       await createPlaylist(data);
-    };
+      await getAllPlaylists(); // Refresh the playlists after creation
+      setIsCreateModalOpen(false); // Close the modal after successful creation
+    } catch (error) {
+      console.error('Error creating playlist:', error);
+      // Error is already handled by the store with toast
+    }
+  };
 
     const handleEdit = (problemId) => {
       navigate(`/problem/edit/${problemId}`);

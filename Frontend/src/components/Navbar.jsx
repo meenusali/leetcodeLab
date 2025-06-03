@@ -52,6 +52,16 @@ const Navbar = ()=>{
               Problems
             </Link>
             <Link 
+              to="/explore" 
+              className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                isActivePath('/explore') 
+                  ? 'bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 text-white font-medium shadow-lg shadow-indigo-500/10' 
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              Explore
+            </Link>
+            <Link 
               to="/contests" 
               className={`px-4 py-2 rounded-lg transition-all duration-200 ${
                 isActivePath('/contests') 
@@ -102,6 +112,17 @@ const Navbar = ()=>{
                   }`}
                 >
                   Problems
+                </Link>
+                <Link 
+                  to="/explore" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`block px-4 py-2 rounded-lg transition-all duration-200 ${
+                    isActivePath('/explore') 
+                      ? 'bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 text-white font-medium' 
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  Explore
                 </Link>
                 <Link 
                   to="/contests" 

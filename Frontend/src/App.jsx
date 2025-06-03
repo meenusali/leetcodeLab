@@ -17,6 +17,8 @@ import ContestPage from "./page/contestPage";
 import LeaderBoard from "./page/leaderBoard";
 import Navbar from "./components/Navbar";
 import EditProblem from "./page/EditProblem";
+import ExplorePage from "./page/ExplorePage";
+
 
 const App = () => {
   const { authUser, checkAuth, set } = useAuthStore();
@@ -29,6 +31,7 @@ const App = () => {
 
   useEffect(() => {
     const initAuth = async () => {
+      const set = useAuthStore.getState;
       // Only check auth for protected routes
       if (!isPublicRoute) {
         try {
@@ -59,7 +62,7 @@ const App = () => {
   // If user is not authenticated and tries to access protected routes, redirect to home
   if (!authUser && !isPublicRoute) {
     const returnTo = encodeURIComponent(location.pathname);
-    return <Navigate to={`/home?returnTo=${returnTo}`} replace />;
+    return <Navigate to={`/home?returnTo=${returnTo}`} replace  />;
   }
 
   return (
@@ -120,7 +123,12 @@ const App = () => {
               {/* Protected routes with full width */}
               <Route
                 path="/"
-                element={<HomePage />}
+                element={authUser ? <HomePage /> : <Navigate to="/home" replace />}
+              />
+              
+              <Route
+                path="/explore"
+                element={<ExplorePage />}
               />
               
               <Route
@@ -156,10 +164,10 @@ const App = () => {
               </Route>
 
               {/* Catch all route - redirect to appropriate page based on auth status */}
-              <Route 
+              {/* <Route 
                 path="*" 
                 element={<Navigate to={authUser ? "/" : "/home"} replace />} 
-              />
+              /> */}
             </Routes>
           </div>
         </div>

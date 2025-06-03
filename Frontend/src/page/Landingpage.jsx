@@ -178,6 +178,70 @@ function Landingpage() {
       </div>
         </section>
 
+      {/* About Us Section */}
+      <section className="relative z-10 py-32 bg-base-100/50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h2 className="text-3xl lg:text-5xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                About Codexium
+              </span>
+            </h2>
+            <p className="text-gray-400 text-lg mb-12">
+              We're on a mission to democratize technical interview preparation and make coding practice accessible to everyone.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Our Mission",
+                description: "To empower developers worldwide with the tools and resources they need to excel in their technical interviews and advance their careers.",
+                icon: "🎯"
+              },
+              {
+                title: "Our Vision",
+                description: "To become the most trusted platform for technical interview preparation, fostering a global community of skilled developers.",
+                icon: "🌟"
+              },
+              {
+                title: "Our Values",
+                description: "We believe in continuous learning, community support, and making quality education accessible to all developers, regardless of their background.",
+                icon: "💡"
+              }
+            ].map((item, index) => (
+              <div 
+                key={index}
+                className="bg-base-100/50 backdrop-blur-lg rounded-xl p-8 border border-white/5 hover:border-primary/50 transition-all duration-300"
+              >
+                <div className="text-4xl mb-4">{item.icon}</div>
+                <h3 className="text-xl font-semibold text-white mb-4">{item.title}</h3>
+                <p className="text-gray-400">{item.description}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-16 text-center">
+            <div className="inline-block bg-base-100/50 backdrop-blur-lg rounded-xl p-8 border border-white/5 max-w-2xl">
+              <h3 className="text-2xl font-semibold text-white mb-4">Join Our Community</h3>
+              <p className="text-gray-400 mb-6">
+                Be part of a growing community of developers who are passionate about coding and continuous learning. 
+                Together, we're building the future of technical education.
+              </p>
+              <a 
+                href="/login" 
+                className="btn btn-primary btn-lg group relative overflow-hidden"
+              >
+                <span className="relative z-10 flex items-center">
+                  Join Now
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Section */}
       <section className="relative z-10 py-32">
         <div className="container mx-auto px-4 max-w-4xl">
