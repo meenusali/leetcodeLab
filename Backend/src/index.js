@@ -35,6 +35,7 @@ app.use("/api/v1/submission", submissionRoutes)
 app.use("/api/v1/playlist" , playlistRoutes)
 app.use("/api/v1/profile" , profileRoutes)
 
-app.listen(8080, () => {
+app.listen(process.env.PORT, () => {
+  console.log(process.env.PORT);
   // Server started successfully
 });
