@@ -6,6 +6,6 @@ export const axiosInstance = axios.create({
   baseURL:
     import.meta.env.MODE === "development"
       ? `${protocol}//localhost:8080/api/v1`
-      : `${protocol}//157.245.254.133:5000/api/v1`,
+      : `${protocol}//codexium.online/api/v1`,
   withCredentials: true,
 });
