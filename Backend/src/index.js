@@ -18,7 +18,7 @@ app.use(
       credentials: true,
     })
   );
-
+console.log("process.env.FRONT_END_URL ",typeof(process.env.FRONT_END_URL))
 app.use(express.json());
 app.use(cookieParser());
 
